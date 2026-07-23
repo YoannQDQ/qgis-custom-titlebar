@@ -48,11 +48,11 @@ class SettingsDialog(QDialog):
             self.previewLabel.setText(self.tr("Invalid template"))
 
     def buttonClicked(self, button):
-        if button == self.buttonBox.button(QDialogButtonBox.Reset):
+        if button == self.buttonBox.button(QDialogButtonBox.StandardButton.Reset):
             self.templateLineEdit.clearValue()
-        elif button == self.buttonBox.button(QDialogButtonBox.Ok):
+        elif button == self.buttonBox.button(QDialogButtonBox.StandardButton.Ok):
             self.accept()
-        elif button == self.buttonBox.button(QDialogButtonBox.Cancel):
+        elif button == self.buttonBox.button(QDialogButtonBox.StandardButton.Cancel):
             self.reject()
 
     def exec(self, template):
