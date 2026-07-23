@@ -20,13 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import configparser
 import os.path
 
 from qgis.core import QgsApplication
 from qgis.PyQt.QtCore import QSettings, QTranslator
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QMessageBox, QWidget
+from qgis.PyQt.QtWidgets import QAction, QDialog, QMessageBox, QWidget
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -137,6 +138,6 @@ class CustomTitleBar:
 
     def show_settings(self):
         res = self.dialog.exec(self.template)
-        print(res, res == self.dialog.Accepted)
-        if res == self.dialog.Accepted:
+        print(res, res == QDialog.DialogCode.Accepted)
+        if res == QDialog.DialogCode.Accepted:
             self.setTemplate(self.dialog.templateLineEdit.value())
