@@ -6,7 +6,7 @@
 name=Custom TitleBar
 qgisMinimumVersion=3.0
 description=Configure what is displayed in the title bar (QGIS full version, sha, project name, ...)
-version=1.0.0
+version=1.1.0
 author=Yoann Quenach de Quivillic
 email=yoann.quenach@gmail.com
 
@@ -17,6 +17,8 @@ hasProcessingProvider=no
 
 changelog=1.0.0 2023-03-15
       * First version
+    1.1.0 2026-07-23
+      * QGIS 4.x compatibility
 
 homepage=https://github.com/YoannQDQ/qgis-custom-titlebar
 tracker=https://github.com/YoannQDQ/qgis-custom-titlebar/issues

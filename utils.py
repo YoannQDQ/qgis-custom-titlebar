@@ -28,7 +28,9 @@ def versionName():
 
 def version():
     strVersion = str(Qgis.versionInt())
-    return "{}.{}.{}".format(strVersion[0], strVersion[1:3], strVersion[3:])
+    return "{}.{}.{}".format(
+        int(strVersion[0]), int(strVersion[1:3]), int(strVersion[3:])
+    )
 
 
 def sha():
