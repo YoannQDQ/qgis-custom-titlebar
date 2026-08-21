@@ -1,5 +1,5 @@
-import os.path
 import re
+from pathlib import Path
 
 from qgis.core import Qgis, QgsApplication, QgsProject
 from qgis.utils import iface
@@ -9,9 +9,7 @@ def profile():
     if Qgis.versionInt() >= 33000:
         return iface.userProfileManager().userProfile().name()
     else:
-        return os.path.basename(
-            QgsApplication.instance().qgisSettingsDirPath().rstrip("/\\")
-        )
+        return Path(QgsApplication.instance().qgisSettingsDirPath().rstrip("/\\")).name
 
 
 def project():
@@ -28,9 +26,7 @@ def versionName():
 
 def version():
     strVersion = str(Qgis.versionInt())
-    return "{}.{}.{}".format(
-        int(strVersion[0]), int(strVersion[1:3]), int(strVersion[3:])
-    )
+    return f"{int(strVersion[0])}.{int(strVersion[1:3])}.{int(strVersion[3:])}"
 
 
 def sha():
@@ -49,7 +45,6 @@ def fillTemplate(template):
         "project": project(),
         "version": version(),
         "sha": sha(),
-        "version": version(),
         "versionName": versionName(),
         "profile": profile(),
     }

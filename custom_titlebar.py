@@ -1,36 +1,11 @@
-"""
-/***************************************************************************
- Custom TitleBar
- A QGIS plugin
- Adds the current QGIS version in the titlebar
-
-                              -------------------
-        begin                : 2023-03-15
-        git sha              : $Format:%H$
-        copyright            : (C) 2023 Yoann Quenach de Quivillic
-        email                : yoann.quenach@gmail.com
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-"""
-
 import configparser
-import os.path
+from pathlib import Path
 
 from qgis.core import QgsApplication
 from qgis.PyQt.QtCore import QSettings, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog, QMessageBox, QWidget
 
-# Initialize Qt resources from file resources.py
-from .resources import *
 from .settings_dialog import SettingsDialog
 from .utils import fillTemplate
 
@@ -51,16 +26,14 @@ class CustomTitleBar:
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
-        self.plugin_dir = os.path.dirname(__file__)
+        self.plugin_dir = Path(__file__).parent
         # initialize locale
         locale = QSettings().value("locale/userLocale")[0:2]
-        locale_path = os.path.join(
-            self.plugin_dir, "i18n", "CustomTitleBar_{}.qm".format(locale)
-        )
+        locale_path = self.plugin_dir / "i18n" / f"CustomTitleBar_{locale}.qm"
 
-        if os.path.exists(locale_path):
+        if locale_path.exists():
             self.translator = QTranslator()
-            self.translator.load(locale_path)
+            self.translator.load(str(locale_path))
             QgsApplication.installTranslator(self.translator)
         self.settings = QSettings()
         self.settings.beginGroup("plugins/custom_titlebar")
@@ -76,7 +49,7 @@ class CustomTitleBar:
         self.updateTitleBarText()
 
         self.plugin_menu = self.iface.pluginMenu().addMenu(
-            QIcon(":/plugins/custom_titlebar/icon.svg"), "Custom TitleBar"
+            self.icon(), "Custom TitleBar"
         )
 
         self.about_action = QAction(
@@ -98,6 +71,9 @@ class CustomTitleBar:
 
         self.dialog = SettingsDialog(self.iface.mainWindow())
 
+    def icon(self):
+        return QIcon(str(self.plugin_dir / "icon.svg"))
+
     def unload(self):
         self.iface.pluginMenu().removeAction(self.plugin_menu.menuAction())
         self.iface.mainWindow().windowTitleChanged.disconnect(self.updateTitleBarText)
@@ -117,17 +93,17 @@ class CustomTitleBar:
     def show_about(self):
         # Used to display plugin icon in the about message box
         bogus = QWidget(self.iface.mainWindow())
-        bogus.setWindowIcon(QIcon(":/plugins/custom_titlebar/icon.svg"))
+        bogus.setWindowIcon(self.icon())
         cfg = configparser.ConfigParser()
-        cfg.read(os.path.join(os.path.dirname(__file__), "metadata.txt"))
+        cfg.read(self.plugin_dir / "metadata.txt")
         version = cfg.get("general", "version")
         QMessageBox.about(
             bogus,
             self.tr("About Custom TitleBar"),
-            "<b>Version</b> {0}<br><br>"
-            "<b>{1}</b> : <a href=https://github.com/YoannQDQ/qgis-custom-titlebar>GitHub</a><br>"
-            "<b>{2}</b> : <a href=https://github.com/YoannQDQ/qgis-custom-titlebar/issues>GitHub</a><br>"
-            "<b>{3}</b> : <a href=https://github.com/YoannQDQ/qgis-custom-titlebar>GitHub</a>".format(
+            "<b>Version</b> {}<br><br>"
+            "<b>{}</b> : <a href=https://github.com/YoannQDQ/qgis-custom-titlebar>GitHub</a><br>"
+            "<b>{}</b> : <a href=https://github.com/YoannQDQ/qgis-custom-titlebar/issues>GitHub</a><br>"
+            "<b>{}</b> : <a href=https://github.com/YoannQDQ/qgis-custom-titlebar>GitHub</a>".format(
                 version,
                 self.tr("Source code"),
                 self.tr("Report issues"),
@@ -138,6 +114,5 @@ class CustomTitleBar:
 
     def show_settings(self):
         res = self.dialog.exec(self.template)
-        print(res, res == QDialog.DialogCode.Accepted)
         if res == QDialog.DialogCode.Accepted:
             self.setTemplate(self.dialog.templateLineEdit.value())

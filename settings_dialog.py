@@ -1,5 +1,5 @@
-import os
 from functools import partial
+from pathlib import Path
 
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 from qgis.PyQt.uic import loadUi
@@ -10,7 +10,7 @@ from .utils import fillTemplate, modified, profile, project, sha, version, versi
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        loadUi(os.path.join(os.path.dirname(__file__), "settings_dialog.ui"), self)
+        loadUi(str(Path(__file__).parent / "settings_dialog.ui"), self)
 
         self.templateLineEdit.valueChanged.connect(self.updatePreview)
         self.buttonBox.clicked.connect(self.buttonClicked)
